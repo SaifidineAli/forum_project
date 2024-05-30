@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load custom_filters %}
+
+{% block content %}
+  <div class="container my-4">
+    <h1 class="mb-3">Ajout de nouvelle catégorie</h1>
+    
+    <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="id_name" class="form-label">Nom de la catégorie</label>
+            {{ form.name | add_class:"form-control" }}
+        </div>
+        <div class="mb-3">
+            <label for="id_description" class="form-label">Description</label>
+            {{ form.description | add_class:"form-control" }}
+        </div>
+        <button type="submit" class="btn btn-primary">Ajouter</button>
+    </form>
+  </div>
+{% endblock %}

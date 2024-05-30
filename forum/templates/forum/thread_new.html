@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% load custom_filters %}
+
+{% block content %}
+  <div class="container my-4">
+    <h1 class="mb-3">Ajout de nouveau fil de discussion dans la sous-catégorie {{ subcategory.name }}</h1>
+    
+    <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="id_title" class="form-label">Titre du fil de discussion</label>
+            {{ form.title | add_class:"form-control" }}
+        </div>
+        <button type="submit" class="btn btn-primary">Ajouter</button>
+    </form>
+  </div>
+{% endblock %}

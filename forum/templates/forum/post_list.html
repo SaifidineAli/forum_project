@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% load custom_filters %}
+{% load static %}
+
+{% block content %}
+  <div class="container my-4">
+    <h1>{{ thread.title }}</h1>
+    <ul class="mt-4">
+      {% for post in page_obj %}
+        <div class="card shadow px-4 py-2 my-1">
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <span>
+              <div class="d-flex align-items-center">
+                <div>
+                  {% if post.created_by.profile_photo %}
+                    <img class="avatar img-thumbnail rounded-circle" src="{{ post.created_by.profile_photo.url }}" width="60px" height="60px">
+                  {% else %}
+                    <img class="avatar img-thumbnail rounded-circle" src="{% static 'images/default_profile.png' %}" width="60px" height="60px">
+                  {% endif %}
+                    <p class="text-center"><strong>{{ post.created_by }}</strong></p>
+                </div>
+                <div class="bg-secondary text-light rounded px-4 py-2 mx-4">{{ post.message }}</div>
+              </div>
+            </span>
+
+            <span>
+              <div class="my-3">
+                <button class="upvote btn btn-success" data-id="{{ post.id }}">Pour</button>
+                <span id="votes-{{ post.id }}">{{ post.total_votes }}</span>
+                <button class="downvote btn btn-danger" data-id="{{ post.id }}">Contre</button>
+              </div>
+            </span>
+          </li>
+        </div>
+      {% endfor %}
+    </ul>
+    <div class="pagination">
+      <span class="step-links">
+          {% if page_obj.has_previous %}
+              <a href="?page=1">&laquo; first</a>
+              <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+          {% endif %}
+
+          <span class="current">
+              Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+          </span>
+
+          {% if page_obj.has_next %}
+              <a href="?page={{ page_obj.next_page_number }}">next</a>
+              <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+          {% endif %}
+      </span>
+    </div>
+
+    {% if user.is_authenticated %}
+    <div class="my-4">
+        <form method="post">
+          {% csrf_token %}
+            <div class="mb-3">
+                <label for="id_message" class="form-label">Votre avis</label>
+                {{ form.message | add_class:"form-control" }}
+            </div>
+            <button type="submit" class="btn btn-primary">Ajouter</button>
+        </form>
+    </div>
+    {% endif %}
+  </div>
+
+
+  <script>
+    document.querySelectorAll('.upvote').forEach(button => {
+      button.addEventListener('click', function() {
+        const postId = this.getAttribute('data-id');
+        fetch(`/forum/post/${postId}/upvote/`)
+          .then(response => response.json())
+          .then(data => {
+            document.getElementById(`votes-${postId}`).innerText = data.total_votes;
+          });
+      });
+    });
+
+    document.querySelectorAll('.downvote').forEach(button => {
+      button.addEventListener('click', function() {
+        const postId = this.getAttribute('data-id');
+        fetch(`/forum/post/${postId}/downvote/`)
+          .then(response => response.json())
+          .then(data => {
+            document.getElementById(`votes-${postId}`).innerText = data.total_votes;
+          });
+      });
+    });
+  </script>
+{% endblock %}

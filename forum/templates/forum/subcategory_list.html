@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="container my-4">
+    <div class="card shadow px-4 py-2">
+      <h1>{{ category.name }}</h1>
+      <p>{{ category.description }}</p>
+      <a href="{% url 'subcategory_add' category.id %}">Nouvelle sous-catégorie</a>
+    </div>
+
+    <h2 class="my-3">Sous-categories</h2>
+    <ul>
+      {% for subcategory in subcategories %}
+        <li>
+          <a href="{% url 'thread_list' subcategory.id %}">{{ subcategory.name }}</a>
+          <p>{{ subcategory.description }}</p>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endblock %}
